@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse: Intelligent Patient Context Engine</title>
+    <title>Doctor AI: The Intelligent Pre-Assessment Agent</title>
     <meta name="description" content="Automate clinical documentation with Doctor AI, the intelligent pre-assessment agent. Seamlessly convert patient chat (text or voice via Telegram) into structured, EMR-ready reports to simplify physician workflow and save 10-15 minutes per consultation.">
     <meta name="keywords" content="AI healthcare documentation, EMR ready report, patient pre-assessment, clinical workflow automation, AI physician assistant, medical AI agent, zero-click documentation, medical scribing AI, healthcare efficiency, doctor AI, Synapse intelligent context engine">
     <meta name="author" content="Sehal Hussain">
 
-    <meta property="og:title" content="Doctor AI: Intelligent Patient Pre-Assessment Agent">
+    <meta property="og:title" content="Doctor AI: Intelligent Pre-Assessment Agent">
     <meta property="og:description" content="Automate clinical documentation with Doctor AI. Convert patient chat into structured, EMR-ready reports to simplify physician workflow and boost efficiency.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="YOUR_LIVE_URL_HERE">
@@ -34,29 +34,18 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            scroll-behavior: smooth;
+            width: 100%;
             
             /* --- Animated Gradient Background --- */
             background-image: radial-gradient(at 20% 80%, #1a1a45 0%, transparent 50%),
                               radial-gradient(at 80% 20%, #082d45 0%, transparent 50%);
             background-attachment: fixed; 
-            background-size: 200% 200%; 
+            background-size: 100% 100%; 
             animation: subtleMove 30s infinite alternate linear; 
         }
 
-        /* Ambient Lighting Effect */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -200px;
-            left: 50%;
-            width: 1200px;
-            height: 800px;
-            background: radial-gradient(circle at center, rgba(88, 51, 168, 0.15) 0%, transparent 60%);
-            transform: translateX(-50%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        
+
         /* Neon Gradient Text */
         .gradient-text {
             background: linear-gradient(90deg, #06b6d4 0%, #34d399 100%); 
