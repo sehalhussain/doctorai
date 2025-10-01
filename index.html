@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse: Intelligent Patient Context Engine</title>
+    <meta name="description" content="Automate clinical documentation with Doctor AI, the intelligent pre-assessment agent. Seamlessly convert patient chat (text or voice via Telegram) into structured, EMR-ready reports to simplify physician workflow and save 10-15 minutes per consultation.">
+    <meta name="keywords" content="AI healthcare documentation, EMR ready report, patient pre-assessment, clinical workflow automation, AI physician assistant, medical AI agent, zero-click documentation, medical scribing AI, healthcare efficiency, doctor AI, Synapse intelligent context engine">
+    <meta name="author" content="Sehal Hussain">
+
+    <meta property="og:title" content="Doctor AI: Intelligent Patient Pre-Assessment Agent">
+    <meta property="og:description" content="Automate clinical documentation with Doctor AI. Convert patient chat into structured, EMR-ready reports to simplify physician workflow and boost efficiency.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="YOUR_LIVE_URL_HERE">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Doctor AI: Intelligent EMR Pre-Assessment">
+    <meta name="twitter:description" content="Automate clinical documentation with Doctor AI, the intelligent agent that creates EMR-ready reports from patient conversations. Zero-Touch Workflow.">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- GLOBAL STYLES: Deep Dark/Futuristic Theme --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap');
+        
+        /* Keyframes for subtle background movement */
+        @keyframes subtleMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #03080e; 
+            color: #d1d5db;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            
+            /* --- Animated Gradient Background --- */
+            background-image: radial-gradient(at 20% 80%, #1a1a45 0%, transparent 50%),
+                              radial-gradient(at 80% 20%, #082d45 0%, transparent 50%);
+            background-attachment: fixed; 
+            background-size: 200% 200%; 
+            animation: subtleMove 30s infinite alternate linear; 
+        }
+
+        /* Ambient Lighting Effect */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            width: 1200px;
+            height: 800px;
+            background: radial-gradient(circle at center, rgba(88, 51, 168, 0.15) 0%, transparent 60%);
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Neon Gradient Text */
+        .gradient-text {
+            background: linear-gradient(90deg, #06b6d4 0%, #34d399 100%); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        /* --- PREMIUM GLASSMORHISM (Liquid Glass) Effect --- */
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.04); 
+            border: 1px solid rgba(6, 182, 212, 0.15); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 40px 0 rgba(0, 0, 0, 0.6), 
+                inset 0 0 10px rgba(255, 255, 255, 0.05); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        /* Hover effect for flow cards (subtle 3D tilt) */
+        .flow-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 
+                0 15px 50px 0 rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(6, 182, 212, 0.2); 
+        }
+
+        /* --- Neon Primary Button --- */
+        .btn-neon {
+            background-color: #06b6d4; 
+            color: #03080e;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 25px rgba(6, 182, 212, 0.4); 
+            animation: neon-pulse 3s infinite alternate; 
+        }
+        .btn-neon:hover {
+            background-color: #34d399; 
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.8), 0 0 35px rgba(52, 211, 153, 0.6); 
+            transform: translateY(-1px);
+            animation: none; 
+        }
+
+        /* Neon Pulse Animation for the CTA Button */
+        @keyframes neon-pulse {
+            from { box-shadow: 0 0 8px rgba(6, 182, 212, 0.6), 0 0 15px rgba(6, 182, 212, 0.3); }
+            to { box-shadow: 0 0 12px rgba(6, 182, 212, 0.8), 0 0 25px rgba(6, 182, 212, 0.5); }
+        }
+
+        /* Input field focus glow */
+        .input-glow:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px #03080e, 0 0 0 3px #06b6d4; 
+        }
+        
+        /* Pre-wrap for maintaining markdown formatting (newlines) */
+        .report-content {
+            white-space: pre-wrap;
+        }
+
+        /* Style for the new textarea chat input */
+        #chatInput {
+            resize: vertical; /* Allow vertical resizing, but limit minimum size */
+            min-height: 50px;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Hero Section (Always visible) -->
+    <header class="pt-32 pb-24 border-b border-gray-900">
+        <div class="container mx-auto px-4 text-center max-w-4xl">
+            <h1 class="text-4xl sm:text-6xl font-extrabold mb-5 leading-tight">
+                Doctor AI: The Intelligent <span class="gradient-text">Pre-Assessment Agent</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Seamlessly convert patient dialogue into a structured, <b>EMR-ready report</b> that <b>automates documentation</b> and drastically <b>simplifies physician workflow.</b>
+            </p>
+            
+            <!-- CTA Grouping (Flexbox for responsiveness) -->
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <!-- Primary CTA button with gentle pulse animation -->
+                <button id="startConsultationButton" class="px-8 py-3 btn-neon font-bold text-lg rounded-xl transform hover:scale-[1.03] w-full sm:w-auto">
+                    ⚡ Test the Zero-Click Workflow
+                </button>
+                <!-- Telegram CTA Button (More compact design) -->
+                <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 bg-blue-700 text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
+                    <!-- Telegram 'Send' icon (Feather icon equivalent) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
+                    <span>Telegram (Voice)</span>
+                </a>
+            </div>
+            
+        </div>
+    </header>
+
+    <!-- Patient Intake Form (Initially Hidden) -->
+    <section id="intakeFormContainer" class="py-24 hidden">
+        <div class="container mx-auto px-4 max-w-md relative">
+            
+            <!-- CLOSE BUTTON -->
+            <button onclick="endConsultation()" class="absolute -top-14 right-0 sm:-top-16 sm:right-0 p-2 text-gray-400 hover:text-red-400 transition duration-150 rounded-full hover:bg-white/10 z-10" aria-label="Close form and return to main page">
+                <!-- Lucide X Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold text-center text-cyan-400 mb-8">
+                Confirm Identity for Secure Intake
+            </h2>
+            <div class="glass-card p-8 rounded-3xl">
+                <p class="text-gray-400 mb-6 text-sm text-center">Your initial details for the AI Assistant.</p>
+                <form id="intakeForm" onsubmit="event.preventDefault(); submitIntakeForm();">
+                    
+                    <div class="mb-5">
+                        <label for="patientName" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                        <input type="text" id="patientName" name="patientName" required class="w-full p-3 bg-gray-900 border border-gray-700 text-gray-50 rounded-lg input-glow" placeholder="Jane Doe">
+                    </div>
+
+                    <div class="flex space-x-4 mb-6">
+                        <div class="flex-1">
+                            <label for="patientAge" class="block text-sm font-medium text-gray-300 mb-2">Age</label>
+                            <input type="number" id="patientAge" name="patientAge" required min="1" max="120" class="w-full p-3 bg-gray-900 border border-gray-700 text-gray-50 rounded-lg input-glow" placeholder="35">
+                        </div>
+                        <div class="flex-1">
+                            <label for="patientGender" class="block text-sm font-medium text-gray-300 mb-2">Gender</label>
+                            <select id="patientGender" name="patientGender" required class="w-full p-3 bg-gray-900 border border-gray-700 text-gray-50 rounded-lg input-glow appearance-none">
+                                <option value="" disabled selected class="text-gray-400">Select</option>
+                                <option value="Male" class="text-gray-50">Male</option>
+                                <option value="Female" class="text-gray-50">Female</option>
+                                <option value="Non-binary" class="text-gray-50">Non-binary</option>
+                                <option value="Prefer not to say" class="text-gray-50">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full px-8 py-3 bg-cyan-600 text-white font-bold text-base rounded-lg mt-4 hover:bg-cyan-500 transition duration-300">
+                        Initiate AI Pre-Assessment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Live Chat Interface Simulation (Initially Hidden) -->
+    <section id="liveChatContainer" class="py-24 hidden">
+        <div class="container mx-auto px-4 max-w-xl">
+            <h2 class="text-2xl font-bold text-center text-gray-100 mb-8">
+                AI Pre-Assessment Terminal
+            </h2>
+            <!-- Chat Window: Glassmorphism style -->
+            <div class="glass-card p-4 sm:p-6 rounded-3xl h-[600px] flex flex-col">
+                
+                <!-- Chat History Area -->
+                <div id="chatHistory" class="flex-grow overflow-y-auto space-y-4 p-2">
+                    <!-- Chat content will be appended here -->
+                </div>
+
+                <!-- Input Area (Now includes the Report Button logic) -->
+                <div class="pt-4 border-t border-gray-800 mt-4">
+                    
+                    <!-- New Button: Appears when the AI returns the structured response -->
+                    <button id="viewReportButton" onclick="showStaticReport()" class="hidden w-full px-5 py-3 mb-4 bg-teal-600 text-white font-bold text-lg rounded-lg hover:bg-teal-500 transition duration-150 shadow-md shadow-teal-900/50">
+                        📋 View Structured Doctor's Report (Click to see what the doctor receives)
+                    </button>
+
+                    <div id="chatInputArea" class="space-y-2">
+                        <!-- CHANGED to textarea for multi-line support -->
+                        <textarea id="chatInput" rows="1" placeholder="Type your symptoms or questions here... (Ctrl+Enter to Send)" class="w-full p-3 bg-gray-900 border border-gray-700 text-gray-50 rounded-lg input-glow"></textarea>
+                        
+                        <!-- Send Button -->
+                        <button id="sendMessageButton" class="w-full sm:w-auto px-5 py-3 bg-cyan-600 text-white font-semibold text-sm rounded-lg hover:bg-cyan-500 transition duration-150">Send (Ctrl+Enter)</button>
+                    </div>
+
+                    <button id="resetConsultationButton" class="w-full mt-3 py-2 text-xs text-cyan-400 hover:text-cyan-600 font-medium">End Consultation & Exit to Main Page</button>
+                </div>
+
+            </div>
+
+            <!-- New: Dedicated Static Report Output Area (Hidden until button click) -->
+            <div id="structuredReportContainer" class="mt-8 pt-6 border-t border-gray-800 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-teal-400 mb-4 flex items-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                        Structured Physician Report for <span id="reportPatientName" class="text-cyan-300 ml-2"></span>
+                    </h3>
+                    
+                    <!-- NEW CONTENT: SAVING AND NOTIFICATION STATUS -->
+                    <div class="mb-6 p-4 bg-indigo-900/20 rounded-lg border border-indigo-700/50">
+                        <p class="text-sm text-indigo-300 font-semibold flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-indigo-400"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            <span>Report Saved & Doctor Notified</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">This file has been instantly saved to your EMR/Google Drive. The doctor has been notified and can view this report immediately from their dashboard.</p>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <!-- COMBINED DYNAMIC REPORT SECTION -->
+                        <div class="p-4 bg-white/5 rounded-lg border border-teal-500/30">
+                            <span class="text-xs font-semibold text-teal-300 block mb-2 uppercase tracking-wider">
+                                AI-GENERATED CLINICAL DRAFT (HPI/CC Summary)
+                            </span>
+                            <!-- This is where the last AI message content will be displayed, starting from "patient demographic" -->
+                            <div id="reportHPI" class="text-gray-200 report-content">Loading...</div>
+                        </div>
+                        
+                        <!-- RED FLAGS SECTION REMOVED per user request -->
+
+                    </div>
+
+                    <p class="mt-6 text-xs text-gray-400 text-center pt-3">
+                        <span class="font-bold text-cyan-300">PHYSICIAN CONTROL:</span> This document is fully editable, allowing the doctor to make any additions, deletions, or edits needed before final sign-off.
+                    </p>
+                </div>
+            </div>
+            <!-- End of Static Report Output Area -->
+
+        </div>
+    </section>
+
+    <!-- Main Content Wrapper (Contains all static sections, hidden when chat starts) -->
+    <div id="staticContent">
+
+        <!-- Value Proposition Section (The Seamless Patient Journey) -->
+        <section id="flow" class="py-24">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <h2 class="text-4xl font-extrabold text-center text-gray-50 mb-4">
+                    The <span class="gradient-text">Zero-Touch Documentation Flow</span>
+                </h2>
+                <p class="text-center text-lg text-gray-400 mb-20">
+                    Automate the administrative steps to focus on clinical excellence and patient care.
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    
+                    <!-- Step 1: Digital Onboarding - Glass Card with Hover Effect -->
+                    <div class="glass-card flow-card p-6 rounded-2xl border-t-4 border-cyan-400/70">
+                        <div class="text-3xl mb-3 text-cyan-400 font-extrabold">01</div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-100">Appointment-Driven Trigger</h3>
+                        <p class="text-gray-400 text-sm">
+                            The moment a patient books an appointment, an automated, secure link is generated, instantly inviting them to start their personalized pre-assessment from any device.
+                        </p>
+                    </div>
+
+                    <!-- Step 2: Contextual Intake - Glass Card with Hover Effect -->
+                    <div class="glass-card flow-card p-6 rounded-2xl border-t-4 border-teal-400/70">
+                        <div class="text-3xl mb-3 text-teal-400 font-extrabold">02</div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-100">AI-Guided, Deep Dialogue</h3>
+                        <p class="text-gray-400 text-sm">
+                            The assistant conducts a detailed chat to collect history, allergies, medication, and current symptoms, ensuring zero critical omissions.
+                        </p>
+                    </div>
+
+                    <!-- Step 3: Structured Report - Glass Card with Hover Effect -->
+                    <div class="glass-card flow-card p-6 rounded-2xl border-t-4 border-indigo-400/70">
+                        <div class="text-3xl mb-3 text-indigo-400 font-extrabold">03</div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-100">Zero-Click EMR Integration & Notification</h3>
+                        <p class="text-gray-400 text-sm">
+                            The final, structured report is automatically saved to your EMR/Drive and the doctor is instantly <b>notified</b> that the patient's file is ready for review.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section id="benefits" class="py-24 border-t border-b border-gray-900">
+            <div class="container mx-auto px-4 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+                <!-- Patient Benefits - Glass Card -->
+                <div class="glass-card flow-card p-8 rounded-2xl border-l-4 border-cyan-400/70">
+                    <div class="text-2xl mb-4 text-cyan-400 font-bold">🩺 Patient Value</div>
+                    <h3 class="text-xl font-semibold mb-5 text-gray-100">Empowerment and Clarity</h3>
+                    <ul class="space-y-4 text-gray-400 text-sm">
+                        <li class="flex items-start">
+                            <span class="text-lg mr-3 text-cyan-400">◆</span>
+                            <div>
+                                <span class="font-semibold text-gray-200">Zero Omissions:</span> Patients provide comprehensive detail at their own pace, reducing stress and ensuring accuracy.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-lg mr-3 text-cyan-400">◆</span>
+                            <div>
+                                <span class="font-semibold text-gray-200">Focused Consultations:</span> The face-to-face time is spent on diagnosis and treatment, not administrative intake.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Doctor Benefits - Glass Card - UPDATED CONTENT -->
+                <div class="glass-card flow-card p-8 rounded-2xl border-l-4 border-indigo-400/70">
+                    <div class="text-2xl mb-4 text-indigo-400 font-bold">⚕️ Clinical Efficiency</div>
+                    <h3 class="text-xl font-semibold mb-5 text-gray-100">Save Time, Gain Control</h3>
+                    <ul class="space-y-4 text-gray-400 text-sm">
+                        <li class="flex items-start">
+                            <span class="text-lg mr-3 text-cyan-400">◆</span>
+                            <div>
+                                <span class="font-semibold text-gray-200">Instant Context:</span> Eliminate 10-15 minutes of repetitive history-taking per consult with a structured report available *before* the patient enters the room.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-lg mr-3 text-cyan-400">◆</span>
+                            <div>
+                                <span class="font-semibold text-gray-200">Full Physician Control:</span> Every report is a living EMR document. The doctor has complete power to **edit, add, or subtract** any detail needed before final sign-off.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Call to Action Footer -->
+        <section id="tech" class="py-24">
+            <div class="container mx-auto px-4 max-w-3xl text-center">
+
+                <!-- Final CTA: Glassmorphism Style -->
+                <div class="glass-card p-10 rounded-3xl">
+                    <h3 class="text-3xl font-bold text-gray-50 mb-4">
+                        Validate the Power of Structured Context
+                    </h3>
+                    <p class="text-gray-400 mb-8 text-lg">
+                        Experience for yourself how starting a consultation with full, contextual knowledge transforms clinical efficiency.
+                    </p>
+                    <!-- CTA Grouping (Flexbox for responsiveness) -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                        <button id="startConsultationButton2" class="px-8 py-3 btn-neon font-bold text-lg rounded-xl transform hover:scale-[1.03] w-full sm:w-auto">
+                            Test the Live Workflow Now →
+                        </button>
+                        <!-- Telegram CTA Button 2 (More compact design) -->
+                        <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 bg-blue-700 text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
+                            <!-- Telegram 'Send' icon (Feather icon equivalent) -->
+                            <svg xmlns="http://www.w3.org/24/24" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
+                            <span>Telegram (Voice)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-8 mt-12 text-center text-gray-600 text-xs border-t border-gray-900">
+            <p> Doctor AI: The Intelligent Pre-Assessment Agent | © 2025 Sehal Hussain. All rights reserved.</p>
+        </footer>
+
+    </div> <!-- End of staticContent -->
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // --- Global State & Configuration ---
+        const WEBHOOK_URL = 'https://n8n.sehalhussain.site/webhook/dc-ai'; 
+        const MAX_RETRIES = 5;
+
+        // Special message to indicate chat initiation (should not be rendered in chat history)
+        const AI_INITIATION_TOKEN = '__AI_INITIATE_CHAT__';
+        // CRITICAL: This is the phrase your external AI must return in its summary response to trigger the button.
+        const AI_TRIGGER_PHRASE = "based on the reported symptoms"; 
+
+        // Global object to store patient data after form submission
+        let patientData = {}; 
+        // NEW: Global variable to store the final report text from the AI
+        let finalAIReportText = '';
+
+        /**
+         * Simple function to convert basic Markdown syntax to HTML for display.
+         * Handles newlines and bold/strong text.
+         * @param {string} text The raw text containing Markdown.
+         * @returns {string} HTML-formatted text.
+         */
+        function formatMarkdown(text) {
+            if (!text) return '';
+
+            let formattedText = text;
+
+            // 1. Convert bold text (Handle **text** and *text*) to <strong>
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedText = formattedText.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+            
+            // 2. Newlines to <br> for line breaks in the HTML bubble
+            // Note: Since chatInput is now a textarea, raw newlines are passed, which the <pre-wrap> class handles.
+            // But we keep this for chat history rendering robustness.
+            formattedText = formattedText.replace(/\n/g, '<br>');
+
+            return formattedText;
+        }
+
+        // Helper function to render a message in the chat window
+        function appendMessage(sender, text, isError = false) {
+            const chatHistory = document.getElementById('chatHistory');
+            
+            // Dark theme colors for chat bubbles
+            const senderBg = sender === 'AI' ? (isError ? 'bg-red-700' : 'bg-gray-800') : 'bg-cyan-900';
+            const senderText = sender === 'AI' ? 'text-gray-50' : 'text-gray-100';
+            const alignClass = sender === 'AI' ? 'justify-start' : 'justify-end';
+            const avatarBg = sender === 'AI' ? 'bg-indigo-600' : 'bg-cyan-500';
+            const borderRadius = sender === 'AI' ? 'rounded-tl-none' : 'rounded-tr-none';
+            const shadow = sender === 'AI' ? 'shadow-md' : 'shadow-lg';
+            const textColor = isError ? 'text-white' : (sender === 'AI' ? 'text-gray-50' : 'text-gray-100');
+            const borderColor = isError ? 'border-red-500' : (sender === 'AI' ? 'border-gray-700' : 'border-cyan-600');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${alignClass}`;
+            
+            // The text parameter here contains either raw user input or the LOADING_HTML.
+            const messageContent = `<p class="text-sm ${textColor}">${text}</p>`;
+
+            if (sender === 'AI') {
+                contentHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-7 h-7 rounded-full ${avatarBg} text-white flex items-center justify-center font-bold text-xs">A</div>
+                        <div class="${senderBg} ${senderText} p-3 rounded-xl ${borderRadius} max-w-xs sm:max-w-md ${shadow} border ${borderColor}">
+                            ${messageContent}
+                        </div>
+                    </div>
+                `;
+            } else { // User
+                contentHTML = `
+                    <div class="flex items-start space-x-3 flex-row-reverse">
+                        <div class="flex-shrink-0 w-7 h-7 rounded-full ${avatarBg} text-white flex items-center justify-center font-bold text-xs">U</div>
+                        <div class="bg-cyan-900 text-gray-100 p-3 rounded-xl rounded-tr-none max-w-xs sm:max-w-md shadow-lg border border-cyan-600">
+                            ${messageContent}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = contentHTML;
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
+            // Return the p element to enable updating the content later (for loading state)
+            return messageDiv.querySelector('p'); 
+        }
+
+        /**
+         * Function to display the static report, including the content filtering logic.
+         */
+        function showStaticReport() {
+            if (!patientData.name) return;
+
+            const reportContainer = document.getElementById('structuredReportContainer');
+            const viewButton = document.getElementById('viewReportButton');
+            
+            // 1. Populate Data
+            document.getElementById('reportPatientName').textContent = patientData.name;
+            
+            let displayContent = finalAIReportText || 'No final report summary was generated by the AI.';
+
+            // --- CRITICAL FILTERING LOGIC ---
+            const searchPhrase = "patient demographic";
+            const index = displayContent.toLowerCase().indexOf(searchPhrase);
+
+            if (index !== -1) {
+                // Slice the content to start exactly where the first character of the search phrase is found
+                displayContent = displayContent.substring(index);
+            }
+            // --- END FILTERING LOGIC ---
+
+            // Update the report content area
+            document.getElementById('reportHPI').innerHTML = displayContent;
+
+
+            // 2. Display Report and Hide the Button
+            reportContainer.classList.remove('hidden');
+            viewButton.classList.add('hidden'); // Hide the view button after clicking it
+
+            // Scroll to the report area for better visibility
+            reportContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+
+        // Main logic for sending the message and calling the webhook
+        async function sendMessage(userMessage = null) {
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendMessageButton');
+            
+            // If message is null (from button click without input), use the input field value.
+            let messageToSend = userMessage === null ? chatInput.value.trim() : userMessage;
+
+            if (!messageToSend) return;
+
+            const isInitialMessage = messageToSend === AI_INITIATION_TOKEN;
+
+            // 1. Append user message (ONLY if it's a real, user-typed message)
+            if (!isInitialMessage) {
+                // Use the raw message for appending (new lines will be formatted by appendMessage)
+                appendMessage('User', chatInput.value); 
+                chatInput.value = ''; // Clear input only for typed messages
+                chatInput.style.height = '50px'; // Reset textarea height
+            }
+
+            // 2. Disable input/button and show loading
+            chatInput.disabled = true;
+            sendButton.disabled = true;
+            sendButton.textContent = isInitialMessage ? 'INITIATING...' : 'SENDING...';
+
+            // 3. Create a temporary loading bubble for the AI response
+            const LOADING_HTML = '<span id="ai-loading-indicator" class="animate-pulse">... AI is thinking ...</span>';
+            const loadingBubble = appendMessage('AI', LOADING_HTML);
+            
+            let aiResponseText = 'Sorry, the AI agent did not respond or an unknown error occurred.';
+            let success = false;
+            
+            // Construct the payload, always including the patient context if available
+            const payload = {
+                message: messageToSend,
+                patientContext: patientData // Send the patient details
+            };
+
+            for (let i = 0; i < MAX_RETRIES; i++) {
+                const delay = Math.pow(2, i) * 1000; // Exponential backoff
+                if (i > 0) await new Promise(resolve => setTimeout(resolve, delay));
+
+                try {
+                    const response = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload) // Send the structured payload
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        let extractedText = '';
+
+                        // Generic extraction logic for n8n webhook response formats
+                        if (typeof data === 'string') {
+                            extractedText = data;
+                        } else if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object' && data[0] !== null) {
+                            const item = data[0];
+                            // Assuming the key for the final text is 'response' or similar
+                            extractedText = item.response || item.text || item.message || item.output || item.reply;
+                        } else if (typeof data === 'object' && data !== null) {
+                            extractedText = data.response || data.text || data.message || data.output || data.reply;
+                        }
+
+                        if (typeof extractedText !== 'string' || extractedText.trim() === '') {
+                            console.error("Webhook response received, but no valid text found. Full response:", data);
+                            aiResponseText = "The AI agent responded, but the data format was unexpected. Check the browser console for details.";
+                            success = false;
+                            break;
+                        }
+                        
+                        aiResponseText = extractedText;
+                        success = true;
+                        break;
+                    } else if (response.status !== 503 && response.status !== 429 && response.status !== 500) {
+                        aiResponseText = `Error: Server returned status ${response.status}. Please check your n8n workflow URL or log for details.`;
+                        break;
+                    }
+                    
+                    // If retryable error, update loading message
+                    const retryIndicator = loadingBubble.querySelector('#ai-loading-indicator');
+                    if(retryIndicator) {
+                        retryIndicator.textContent = `Attempt ${i + 1} failed (${response.status}). Retrying...`;
+                    } else {
+                        loadingBubble.innerHTML = `Attempt ${i + 1} failed (${response.status}). Retrying...`; 
+                    }
+
+                } catch (error) {
+                    console.error(`Fetch attempt ${i + 1} failed:`, error);
+                    if (i === MAX_RETRIES - 1) {
+                        aiResponseText = `Failed to connect to the webhook after ${MAX_RETRIES} attempts. Check the console for network details.`;
+                        break;
+                    }
+                }
+            }
+
+            // 4. Update the loading bubble with final AI response
+            if (loadingBubble) {
+                const formattedHtml = formatMarkdown(aiResponseText);
+                loadingBubble.innerHTML = formattedHtml; 
+                
+                if (!success) {
+                    // Update the bubble to show error style
+                    const messageContainer = loadingBubble.closest('.bg-gray-800');
+                    if (messageContainer) {
+                        messageContainer.classList.remove('bg-gray-800');
+                        messageContainer.classList.add('bg-red-700');
+                        messageContainer.classList.add('border-red-500');
+                    }
+                }
+                
+                // --- CRITICAL CHANGE: Store the AI text and Trigger Button Check ---
+                if (success && aiResponseText.toLowerCase().includes(AI_TRIGGER_PHRASE.toLowerCase())) {
+                    // Store the raw text (with markdown) for the report display
+                    finalAIReportText = formattedHtml; 
+                    
+                    document.getElementById('viewReportButton').classList.remove('hidden');
+                    document.getElementById('chatInputArea').classList.add('hidden');
+                }
+            }
+            
+            // 5. Re-enable input/button (only if the conversation isn't concluded)
+            if (!document.getElementById('viewReportButton').classList.contains('hidden')) {
+                // If the report button is visible, the chat is considered over, so inputs remain disabled/hidden
+                return;
+            }
+
+            chatInput.disabled = false;
+            sendButton.disabled = false;
+            sendButton.textContent = 'Send (Ctrl+Enter)';
+            chatInput.focus();
+        }
+        
+        // Function to handle the form submission
+        function submitIntakeForm() {
+            const name = document.getElementById('patientName').value.trim();
+            const age = document.getElementById('patientAge').value.trim();
+            const gender = document.getElementById('patientGender').value;
+            
+            if (!name || !age || !gender) {
+                return;
+            }
+
+            // 1. Store the validated data globally
+            patientData = {
+                name: name,
+                age: parseInt(age, 10),
+                gender: gender
+            };
+
+            // 2. Hide the form and show the chat
+            document.getElementById('intakeFormContainer').classList.add('hidden');
+            document.getElementById('liveChatContainer').classList.remove('hidden');
+
+            // 3. Clear chat history and initiate the AI conversation
+            document.getElementById('chatHistory').innerHTML = '';
+            sendMessage(AI_INITIATION_TOKEN);
+            
+            // 4. Update the placeholder to be more specific now that the chat has started
+            const chatInput = document.getElementById('chatInput');
+            chatInput.placeholder = `Hello ${name}, tell the AI about your symptoms... (Ctrl+Enter to Send)`;
+            chatInput.focus();
+        }
+
+
+        // Function to handle the initial start consultation button click
+        function startConsultation() {
+            // Hide static content
+            document.getElementById('staticContent').classList.add('hidden');
+            
+            // Show the intake form FIRST
+            document.getElementById('intakeFormContainer').classList.remove('hidden');
+            document.getElementById('liveChatContainer').classList.add('hidden');
+            
+            // Ensure the report and button are hidden if a previous consultation ran
+            document.getElementById('viewReportButton').classList.add('hidden');
+            document.getElementById('structuredReportContainer').classList.add('hidden');
+            document.getElementById('chatInputArea').classList.remove('hidden');
+            
+            // Reset the final report text
+            finalAIReportText = '';
+
+
+            // Scroll smoothly to the form container
+            document.getElementById('intakeFormContainer').scrollIntoView({ behavior: 'smooth' });
+            
+            document.getElementById('patientName').focus();
+        }
+
+        // Function to handle the reset consultation button click
+        function endConsultation() {
+            // Hide all interactive sections
+            document.getElementById('liveChatContainer').classList.add('hidden');
+            document.getElementById('intakeFormContainer').classList.add('hidden');
+            document.getElementById('structuredReportContainer').classList.add('hidden');
+
+            // Reset UI elements
+            document.getElementById('viewReportButton').classList.add('hidden');
+            document.getElementById('chatInputArea').classList.remove('hidden');
+            document.getElementById('chatInput').disabled = false;
+            document.getElementById('sendMessageButton').disabled = false;
+            document.getElementById('sendMessageButton').textContent = 'Send (Ctrl+Enter)';
+            
+            // Reset global state
+            patientData = {};
+            finalAIReportText = '';
+
+            // Show static content
+            document.getElementById('staticContent').classList.remove('hidden');
+            // Scroll smoothly back to the top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Event Listeners
+        window.onload = function() {
+            // Attach listener to the main hero button
+            document.getElementById('startConsultationButton').addEventListener('click', startConsultation);
+            // Attach listener to the second CTA button (in the footer, which is inside staticContent)
+            document.getElementById('startConsultationButton2').addEventListener('click', startConsultation);
+            // Attach listener to the reset button inside the chat
+            document.getElementById('resetConsultationButton').addEventListener('click', endConsultation);
+            // Attach listener to the send button (for user-typed messages)
+            document.getElementById('sendMessageButton').addEventListener('click', () => sendMessage());
+            
+            // --- NEW KEYBINDING LOGIC FOR TEXTAREA ---
+            document.getElementById('chatInput').addEventListener('keydown', function(e) {
+                // Check for Ctrl + Enter or Cmd + Enter (for Mac)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !document.getElementById('sendMessageButton').disabled) {
+                    e.preventDefault(); // Prevent the default newline/form submit
+                    sendMessage();
+                }
+                
+                // Auto-adjust textarea height on input
+                this.style.height = '50px'; // Reset height
+                this.style.height = (this.scrollHeight) + 'px'; // Set to fit content
+            });
+            // --- END NEW KEYBINDING LOGIC ---
+        };
+    </script>
+</body>
+</html>
