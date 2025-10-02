@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor AI: The Intelligent Patient Assesment Agent</title>
+    <title>Doctor AI: The Patient Assesment Agent</title>
     <meta name="description" content="Automate clinical documentation with Doctor AI, the intelligent pre-assessment agent. Seamlessly convert patient chat (text or voice via Telegram) into structured, EMR-ready reports to simplify physician workflow and save 10-15 minutes per consultation.">
     <meta name="keywords" content="AI healthcare documentation, EMR ready report, patient pre-assessment, clinical workflow automation, AI physician assistant, medical AI agent, zero-click documentation, medical scribing AI, healthcare efficiency, doctor AI, Synapse intelligent context engine">
     <meta name="author" content="Sehal Hussain">
-    <meta property="og:title" content="Doctor AI: Intelligent Patient Pre-Assessment Agent">
+    <meta property="og:title" content="Doctor AI: The Patient Pre-Assessment Agent">
     <meta property="og:description" content="Automate clinical documentation with Doctor AI. Convert patient chat into structured, EMR-ready reports to simplify physician workflow and boost efficiency.">
     <meta property="og:image" content="https://sehalhussain.github.io/doctorai/images/Share_image.png">
     <meta property="og:image:width" content="1200">
@@ -25,32 +25,46 @@
     <style>
         /* --- GLOBAL STYLES: Deep Dark/Futuristic Theme --- */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap');
-        
+
         /* Keyframes for subtle background movement */
         @keyframes subtleMove {
             0% { background-position: 0% 0%; }
             100% { background-position: 100% 100%; }
         }
-
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #03080e; 
             color: #d1d5db;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            scroll-behavior: smooth;
-            width: 100%;
-            
-            /* --- Animated Gradient Background --- */
-            background-image: radial-gradient(at 20% 80%, #1a1a45 0%, transparent 50%),
-                              radial-gradient(at 80% 20%, #082d45 0%, transparent 50%);
-            background-attachment: fixed; 
-            background-size: 100% 100%; 
-            animation: subtleMove 30s infinite alternate linear; 
+            /* CRITICAL FIX: Ensures nothing pushes the viewport wider than 100vw */
+            overflow-x: hidden; 
+            position: sticky;
+            width: 100vw; /* Explicitly constrain width */
+            background-attachment: fixed;
+            /* Added padding-top to compensate for the fixed navbar height (approx 80px) */
+            padding-top: 5rem; 
         }
 
-
+        /* --- STATIC, Contained Background Layer --- */
+        body::after {
+            content: '';
+            position: fixed; /* Fixed to the viewport */
+            top: -50%;
+            left: -50%;
+            width: 200%; /* Oversize locally */
+            height: 200%; /* Oversize locally */
+            z-index: -2; 
+            pointer-events: none;
+            
+            /* Apply the fixed background gradient effect */
+            background-image: radial-gradient(at 20% 80%, #363683 0%, transparent 50%),
+                              radial-gradient(at 80% 20%, #38174e 0%, transparent 50%);
+            
+            /* Apply a fixed scale/translate transform instead of an animation */
+            transform: scale(1.5) translate(0, 0); 
+        }
+        
         /* Neon Gradient Text */
         .gradient-text {
             background: linear-gradient(90deg, #06b6d4 0%, #34d399 100%); 
@@ -72,6 +86,16 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
         }
         
+        .glass-card-2 {
+            background-color: rgba(9, 7, 15, 0.863); 
+            border: 1px solid rgba(6, 182, 212, 0.15); 
+            backdrop-filter: blur(80px); 
+            -webkit-backdrop-filter: blur(80px);
+            box-shadow: 
+                0 10px 40px 0 rgba(0, 0, 0, 0.6), 
+                inset 0 0 10px rgba(255, 255, 255, 0.05); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
         /* Hover effect for flow cards (subtle 3D tilt) */
         .flow-card:hover {
             transform: translateY(-5px) scale(1.01);
@@ -86,7 +110,6 @@
             color: #03080e;
             transition: all 0.3s;
             box-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 25px rgba(6, 182, 212, 0.4); 
-            animation: neon-pulse 3s infinite alternate; 
         }
         .btn-neon:hover {
             background-color: #34d399; 
@@ -118,35 +141,94 @@
             resize: vertical; /* Allow vertical resizing, but limit minimum size */
             min-height: 50px;
         }
+        
+        /* --- SCROLL ANIMATION CLASSES --- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.6s ease-out;
+            will-change: opacity, transform;
+        }
 
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom scroll-padding for fixed header links */
+        html {
+            scroll-padding-top: 6rem; /* Must be larger than the fixed nav height */
+        }
     </style>
 </head>
 <body class="antialiased">
 
+    <!-- FIXED NAVIGATION BAR (Glass Card Style) -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-card py-2 backdrop-blur-xl">
+        <div class="container mx-auto px-6 flex justify-between items-center max-w-6xl">
+            <!-- Logo/Brand -->
+            <a href="#" class="text-xl font-bold gradient-text hover:opacity-80 transition duration-150">Doctor AI</a>
+            
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#flow" class="text-gray-300 hover:text-cyan-400 transition duration-150 font-medium">Workflow</a>
+                <a href="#benefits" class="text-gray-300 hover:text-cyan-400 transition duration-150 font-medium">Benefits</a>
+                <a href="#tech" class="text-gray-300 hover:text-cyan-400 transition duration-150 font-medium">Technology</a>
+                <a href="#sales-cta" class="text-gray-300 hover:text-cyan-400 transition duration-150 font-medium">Contact</a>
+            </div>
+            
+            <!-- CTA -->
+            <button onclick="startConsultation()" class="hidden md:block px-4 py-2 btn-neon text-sm font-bold rounded-lg transition duration-300 transform hover:scale-[1.03]">
+                Try Demo
+            </button>
+            
+            <!-- Mobile Menu Icon (Hamburger/Close) -->
+            <button id="mobileMenuButton" onclick="toggleMobileMenu()" class="md:hidden text-gray-300 hover:text-cyan-400 focus:outline-none p-2 rounded-lg border border-transparent hover:border-cyan-400/30 transition" aria-label="Toggle navigation menu">
+                <!-- Hamburger Icon -->
+                <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <!-- Close Icon (Hidden by default) -->
+                <svg id="closeIcon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Dropdown (Hidden on Desktop) -->
+        <div id="mobileMenu" class=" hidden md:hidden absolute glass-card-2 z-50 top-full left-0 w-full p-4 backdrop-blur-xl transition-all duration-300 ease-in-out">
+            <!-- Mobile Nav Links -->
+            <a href="#flow" onclick="closeMobileMenu()" class="block py-2 text-gray-300 hover:text-cyan-400 transition duration-150 font-medium border-b border-gray-800/50">Workflow</a>
+            <a href="#benefits" onclick="closeMobileMenu()" class="block py-2 text-gray-300 hover:text-cyan-400 transition duration-150 font-medium border-b border-gray-800/50">Benefits</a>
+            <a href="#tech" onclick="closeMobileMenu()" class="block py-2 text-gray-300 hover:text-cyan-400 transition duration-150 font-medium border-b border-gray-800/50">Technology</a>
+            <a href="#sales-cta" onclick="closeMobileMenu()" class="block py-2 text-gray-300 hover:text-cyan-400 transition duration-150 font-medium mb-4">Contact</a>
+
+            <!-- Mobile CTA Button -->
+            <button onclick="startConsultation(); closeMobileMenu();" class="w-full mt-2 px-4 py-2 btn-neon text-sm font-bold rounded-lg transition duration-300">
+                Try Demo
+            </button>
+        </div>
+    </nav>
+
+
     <!-- Header & Hero Section (Always visible) -->
-    <header class="pt-32 pb-24">
-        <div class="container mx-auto px-4 text-center max-w-4xl">
-            <h1 class="text-4xl sm:text-6xl font-extrabold mb-5 leading-tight">
-                Doctor AI: The Intelligent <span class="gradient-text">Pre-Assessment Agent</span>
+    <header id="hero" class="pt-24 pb-24 mx-auto flex wrap justify-center items-center text-center">
+        <div class="container mx-auto px-10 text-center max-w-6xl">
+            <h1 class="text-3xl sm:text-5xl font-extrabold mb-5 leading-tight">
+                Doctor AI: The Patient <span class="gradient-text">Assessment Agent</span>
             </h1>
-            <p class="text-lg sm:text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Seamlessly convert patient dialogue into a structured, <b>EMR-ready report</b> that <b>automates documentation</b> and drastically <b>simplifies physician workflow.</b>
-            </p>
+            <p class="text-lg sm:text-x.5 text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Seamlessly convert patient dialogue into a structured, <b>EMR-ready report</b> that <b>automates documentation</b> and drastically <b>simplifies physician workflow.</b>            </p>
             
             <!-- CTA Grouping (Flexbox for responsiveness) -->
             <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
                 <!-- Primary CTA button with gentle pulse animation -->
                 <button id="startConsultationButton" class="px-8 py-3 btn-neon font-bold text-lg rounded-xl transform hover:scale-[1.03] w-full sm:w-auto">
-                    ⚡ Test the Zero-Click Workflow
+                    Test Live Demo
                 </button>
                 <!-- Telegram CTA Button (More compact design) -->
-                <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 bg-blue-700 text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
+                <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 glass-card text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
                     <!-- Telegram 'Send' icon (Feather icon equivalent) -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
                     <span>Telegram (Voice)</span>
                 </a>
             </div>
-            
         </div>
     </header>
 
@@ -258,9 +340,6 @@
                             <!-- This is where the last AI message content will be displayed, starting from "patient demographic" -->
                             <div id="reportHPI" class="text-gray-200 report-content">Loading...</div>
                         </div>
-                        
-                        <!-- RED FLAGS SECTION REMOVED per user request -->
-
                     </div>
 
                     <p class="mt-6 text-xs text-gray-400 text-center pt-3">
@@ -277,7 +356,7 @@
     <div id="staticContent">
 
         <!-- Value Proposition Section (The Seamless Patient Journey) -->
-        <section id="flow" class="py-24">
+        <section id="flow" class="py-20 px-4 fade-in-section">
             <div class="container mx-auto px-4 max-w-6xl">
                 <h2 class="text-4xl font-extrabold text-center text-gray-50 mb-4">
                     The <span class="gradient-text">Zero-Touch Documentation Flow</span>
@@ -293,7 +372,7 @@
                         <div class="text-3xl mb-3 text-cyan-400 font-extrabold">01</div>
                         <h3 class="text-xl font-semibold mb-3 text-gray-100">Appointment-Driven Trigger</h3>
                         <p class="text-gray-400 text-sm">
-                            The moment a patient books an appointment, an automated, secure link is generated, instantly inviting them to start their personalized pre-assessment from any device.
+                            The moment a patient books, an automated, secure link is generated, instantly inviting them to start their personalized pre-assessment from any device.
                         </p>
                     </div>
 
@@ -319,12 +398,21 @@
             </div>
         </section>
 
+        <section id="benefits" class="pt-12 px-4 fade-in-section">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <h2 class="text-4xl font-extrabold text-center text-gray-50 mb-4">
+                <span class="gradient-text">Benefits</span>
+                </h2>
+                <p class="text-center text-lg text-gray-400 mb-20">
+                    Transforming clinical workflow for both patients and physicians.
+                </p>
+
         <!-- Benefits Section -->
-        <section id="benefits" class="py-24">
-            <div class="container mx-auto px-4 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <section id="benefits" class="pt-2 pb-20 px-1 fade-in-section">
+            <div class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
 
                 <!-- Patient Benefits - Glass Card -->
-                <div class="glass-card flow-card p-8 rounded-2xl border-l-4 border-cyan-400/70">
+                <div class="glass-card p-8 rounded-2xl border-l-4 border-cyan-400/70" >
                     <div class="text-2xl mb-4 text-cyan-400 font-bold">🩺 Patient Value</div>
                     <h3 class="text-xl font-semibold mb-5 text-gray-100">Empowerment and Clarity</h3>
                     <ul class="space-y-4 text-gray-400 text-sm">
@@ -341,17 +429,18 @@
                             </div>
                         </li>
                     </ul>
+                
                 </div>
 
                 <!-- Doctor Benefits - Glass Card - UPDATED CONTENT -->
-                <div class="glass-card flow-card p-8 rounded-2xl border-l-4 border-indigo-400/70">
+                <div class="glass-card p-8 rounded-2xl border-l-4 border-indigo-400/70">
                     <div class="text-2xl mb-4 text-indigo-400 font-bold">⚕️ Clinical Efficiency</div>
                     <h3 class="text-xl font-semibold mb-5 text-gray-100">Save Time, Gain Control</h3>
                     <ul class="space-y-4 text-gray-400 text-sm">
                         <li class="flex items-start">
                             <span class="text-lg mr-3 text-cyan-400">◆</span>
                             <div>
-                                <span class="font-semibold text-gray-200">Instant Context:</span> Eliminate 10-15 minutes of repetitive history-taking per consult with a structured report available <b>before</b> the patient enters the room.
+                                <span class="font-semibold text-gray-200">Instant Context:</span> Eliminate 10-15 minutes of repetitive history-taking per consult with a structured report available *before* the patient enters the room.
                             </div>
                         </li>
                         <li class="flex items-start">
@@ -366,27 +455,27 @@
             </div>
         </section>
 
-        <!-- Call to Action Footer -->
-        <section id="tech" class="py-24">
-            <div class="container mx-auto px-4 max-w-3xl text-center">
+        <!-- Product CTA Footer (Existing one) -->
+        <section id="tech" class="py-12 fade-in-section">
+            <div class="container mx-auto px-1 max-w-3xl text-center">
 
                 <!-- Final CTA: Glassmorphism Style -->
                 <div class="glass-card p-10 rounded-3xl">
-                    <h3 class="text-3xl font-bold text-gray-50 mb-4">
-                        Validate the Power of Structured Context
+                    <h3 class="gradient-text text-3xl font-bold text-gray-50 mb-4">
+                        Experience it Live
                     </h3>
-                    <p class="text-gray-400 mb-8 text-lg">
+                    <p class="text-gray-400 mb-8 text-.5g">
                         Experience for yourself how starting a consultation with full, contextual knowledge transforms clinical efficiency.
                     </p>
                     <!-- CTA Grouping (Flexbox for responsiveness) -->
-                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 animate-pulse">
                         <button id="startConsultationButton2" class="px-8 py-3 btn-neon font-bold text-lg rounded-xl transform hover:scale-[1.03] w-full sm:w-auto">
-                            Test the Live Workflow Now →
+                        Start Live Test Now
                         </button>
                         <!-- Telegram CTA Button 2 (More compact design) -->
-                        <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 bg-blue-700 text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
+                        <a href="https://t.me/doctorsehalbot" target="_blank" class="px-6 py-3 glass-card text-gray-100 font-medium text-base rounded-xl transition duration-300 hover:bg-blue-600 shadow-md shadow-blue-900/30 flex items-center space-x-2 w-full sm:w-auto justify-center">
                             <!-- Telegram 'Send' icon (Feather icon equivalent) -->
-                            <svg xmlns="http://www.w3.org/24/24" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 15 2 11 22 2"></polygon></svg>
                             <span>Telegram (Voice)</span>
                         </a>
                     </div>
@@ -394,9 +483,41 @@
             </div>
         </section>
 
-        <!-- Footer -->
+        <!-- NEW SECTION: Final Implementation CTA / Hire Me -->
+        <section id="sales-cta" class="pt-20 fade-in-section">
+            <div class="container mx-auto px-1 max-w-4xl text-center">
+                <div class="glass-card p-10 rounded-3xl border-2 border-indigo-600/50">
+                    <h3 class="text-3xl font-extrabold gradient-text mb-4 leading-tight">
+                        Ready to Transform Your Clinic?
+                    </h3>
+                    <p class="text-x.5 text-gray-300 mb-8 max-w-2xl mx-auto">
+                        Whether you have a small clinic or a big hospital, I will personally set up this custom, zero-touch documentation infrastructure for you. <b>My goal is to make your life easier.</b> <br> <br> Let's connect and discuss how we can tailor this solution to fit your unique needs.
+                    </p>
+
+                    <div class="flex flex-wrap justify-center items-center gap-4">
+                        <a href="https://wa.me/919831546373" target="_blank" class="flex items-center justify-center w-12 h-12 p-0 rounded-full glass-card hover:bg-green-500 transition duration-300 font-semibold text-white shadow-md shadow-green-900/50" aria-label="Contact via WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                        </a>
+
+                        <a href="mailto:sehalhussain@gmail.com" class="flex items-center justify-center w-12 h-12 p-0 rounded-full glass-card hover:bg-red-500 transition duration-300 font-semibold text-white shadow-md shadow-red-900/50" aria-label="Contact via Email">
+                            <i class="fa-solid fa-envelope text-xl"></i>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/sehalhussain/" target="_blank" class="flex items-center justify-center w-12 h-12 p-0 rounded-full glass-card hover:bg-blue-600 transition duration-300 font-semibold text-white shadow-md shadow-blue-900/50" aria-label="Connect on LinkedIn">
+                            <i class="fa-brands fa-linkedin-in text-xl"></i>
+                        </a>
+
+                        <a href="https://sehalhussain.github.io/journey" target="_blank" class="flex items-center justify-center w-12 h-12 p-0 rounded-full glass-card hover:bg-fuchsia-500 transition duration-300 font-semibold text-white shadow-md shadow-fuchsia-900/50" aria-label="Visit My Website">
+                            <i class="fa-solid fa-globe text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Footer -->
         <footer class="py-8 mt-12 text-center text-gray-600 text-xs">
-            <p> Doctor AI: The Intelligent Pre-Assessment Agent | © 2025 Sehal Hussain. All rights reserved.</p>
+            <p>Doctor AI: The Patient Assesment Agent | © 2025 Sehal Hussain. All rights reserved.</p>
         </footer>
 
     </div> <!-- End of staticContent -->
@@ -416,6 +537,41 @@
         let patientData = {}; 
         // NEW: Global variable to store the final report text from the AI
         let finalAIReportText = '';
+        
+        // Mobile Menu State
+        let isMobileMenuOpen = false;
+
+        /**
+         * Toggles the mobile navigation menu open and closed.
+         */
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            const menu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            const closeIcon = document.getElementById('closeIcon');
+
+            if (isMobileMenuOpen) {
+                // Show menu and swap icons
+                menu.classList.remove('hidden');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                // Hide menu and swap icons
+                menu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+        
+        /**
+         * Closes the mobile menu, typically called after a navigation link is clicked.
+         */
+        function closeMobileMenu() {
+             if (isMobileMenuOpen) {
+                toggleMobileMenu();
+             }
+        }
+
 
         /**
          * Simple function to convert basic Markdown syntax to HTML for display.
@@ -433,8 +589,6 @@
             formattedText = formattedText.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
             
             // 2. Newlines to <br> for line breaks in the HTML bubble
-            // Note: Since chatInput is now a textarea, raw newlines are passed, which the <pre-wrap> class handles.
-            // But we keep this for chat history rendering robustness.
             formattedText = formattedText.replace(/\n/g, '<br>');
 
             return formattedText;
@@ -731,25 +885,62 @@
             // Reset global state
             patientData = {};
             finalAIReportText = '';
+            
+            // Ensure mobile menu is closed when returning to the main view
+            closeMobileMenu(); 
 
             // Show static content
             document.getElementById('staticContent').classList.remove('hidden');
+            
+            // Re-initialize the animations, ensuring the now visible sections start hidden
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                section.classList.remove('is-visible');
+            });
+            initializeScrollAnimations(); // Re-attach observer for sections that might be off-screen
+
             // Scroll smoothly back to the top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        
+        /**
+         * Initializes the Intersection Observer for scroll animations.
+         */
+        function initializeScrollAnimations() {
+            const sections = document.querySelectorAll('.fade-in-section');
+            
+            const observerOptions = {
+                root: null, // viewport as the root
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the section is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+
 
         // Event Listeners
         window.onload = function() {
-            // Attach listener to the main hero button
+            // 1. Initialize Scroll Animations
+            initializeScrollAnimations();
+            
+            // 2. Attach standard listeners
             document.getElementById('startConsultationButton').addEventListener('click', startConsultation);
-            // Attach listener to the second CTA button (in the footer, which is inside staticContent)
             document.getElementById('startConsultationButton2').addEventListener('click', startConsultation);
-            // Attach listener to the reset button inside the chat
             document.getElementById('resetConsultationButton').addEventListener('click', endConsultation);
-            // Attach listener to the send button (for user-typed messages)
             document.getElementById('sendMessageButton').addEventListener('click', () => sendMessage());
             
-            // --- NEW KEYBINDING LOGIC FOR TEXTAREA ---
+            // --- KEYBINDING LOGIC FOR TEXTAREA ---
             document.getElementById('chatInput').addEventListener('keydown', function(e) {
                 // Check for Ctrl + Enter or Cmd + Enter (for Mac)
                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !document.getElementById('sendMessageButton').disabled) {
@@ -761,11 +952,12 @@
                 this.style.height = '50px'; // Reset height
                 this.style.height = (this.scrollHeight) + 'px'; // Set to fit content
             });
-            // --- END NEW KEYBINDING LOGIC ---
+            // --- END KEYBINDING LOGIC ---
         };
     </script>
 </body>
 </html>
+
 
 
 
